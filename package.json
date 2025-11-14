@@ -7,7 +7,7 @@
   "author": "Eduardo Andrade",
   "license": "MIT",
   "scripts": {
-    "dev": "npx tsc watch src/infra/http/server.ts"
+    "dev": "tsx watch --env-file .env src/infra/http/server.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.5",
