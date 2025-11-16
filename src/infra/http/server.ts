@@ -1,10 +1,15 @@
 import fastifyCors from '@fastify/cors'
+import fastifyMultipart from '@fastify/multipart'
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUi from '@fastify/swagger-ui'
 import fastify from 'fastify'
 import {
   hasZodFastifySchemaValidationErrors,
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod'
+import { uploadImagesRoute } from './routes/upload-images'
 
 const server = fastify()
 
@@ -19,7 +24,6 @@ server.setErrorHandler((error, request, reply) => {
     })
   }
 
-  // Log the error for debugging
   console.error(error)
 
   return reply.status(500).send({
@@ -28,6 +32,24 @@ server.setErrorHandler((error, request, reply) => {
 })
 
 server.register(fastifyCors, { origin: '*' })
+
+server.register(fastifyMultipart)
+
+server.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: 'Upload Images API',
+      version: '1.0.0',
+    },
+  },
+  transform: jsonSchemaTransform,
+})
+
+server.register(fastifySwaggerUi, {
+  routePrefix: '/docs',
+})
+
+server.register(uploadImagesRoute)
 
 server.listen({ port: 3333 }).then(() => {
   console.log('HTTP server running on http://localhost:3333')
