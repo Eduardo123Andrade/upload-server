@@ -34,6 +34,12 @@ export const uploadImagesRoute: FastifyPluginAsyncZod = async server => {
         contentStream: uploadedFile.file,
       })
 
+      if (uploadedFile.file.truncated) {
+        return reply
+          .status(400)
+          .send({ message: 'File size limit exceeded. Max size is 2MB.' })
+      }
+
       if (isRight(result)) {
         console.log(result?.right?.url)
         console.log(unwrapEither(result).url)
