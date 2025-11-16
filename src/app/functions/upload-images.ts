@@ -2,6 +2,7 @@ import { Readable } from 'node:stream'
 import { z } from 'zod'
 import { db } from '@/infra/db'
 import { schemas } from '@/infra/db/schemas'
+import { uploadFileToStorage } from '@/infra/storage/upload-file-to-storage'
 import { Either, makeLeft, makeRight } from '@/shared'
 import { InvalidFileFormatError } from '../errors'
 
@@ -41,13 +42,18 @@ export const uploadImages = async (
     return makeLeft(new InvalidFileFormatError())
   }
 
-  // TODO - load to storage service
+  const { key, url } = await uploadFileToStorage({
+    folder: 'images',
+    filename,
+    contentType,
+    contentStream,
+  })
 
   await db.insert(schemas.uploads).values({
     name: filename,
-    remoteKey: filename,
-    remoteUrl: `https://example.com/${filename}-${Date.now()}`,
+    remoteKey: key,
+    remoteUrl: url,
   })
 
-  return makeRight({ url: 'https://example.com/some-image-url' })
+  return makeRight({ url })
 }
