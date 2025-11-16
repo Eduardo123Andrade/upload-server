@@ -9,10 +9,7 @@ export const uploadImagesRoute: FastifyPluginAsyncZod = async server => {
     {
       schema: {
         summary: 'Upload an image',
-        body: z.object({
-          name: z.string(),
-          // Define your body schema here
-        }),
+        consumes: ['multipart/form-data'],
         response: {
           201: z.object({ uploadId: z.string() }),
           409: z
@@ -22,9 +19,15 @@ export const uploadImagesRoute: FastifyPluginAsyncZod = async server => {
       },
     },
     async (request, reply) => {
+      const uploadedFile = await request.file({
+        limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+      })
+
+      const name = uploadedFile?.fieldname || 'unnamed'
+
       await db.insert(schemas.uploads).values({
-        name: request.body.name,
-        remoteKey: `some-remote-key-${request.body.name}`,
+        name: name,
+        remoteKey: `some-remote-key-${name}-${Date.now()}`,
         remoteUrl: 'some-remote-url',
       })
       return reply.status(201).send({ uploadId: 'some-upload-id' })

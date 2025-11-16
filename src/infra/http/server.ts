@@ -10,6 +10,7 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod'
 import { uploadImagesRoute } from './routes/upload-images'
+import { transformSwaggerSchema } from './transform-swagger-schema'
 
 const server = fastify()
 
@@ -42,7 +43,7 @@ server.register(fastifySwagger, {
       version: '1.0.0',
     },
   },
-  transform: jsonSchemaTransform,
+  transform: transformSwaggerSchema,
 })
 
 server.register(fastifySwaggerUi, {
