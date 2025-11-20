@@ -14,7 +14,10 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down"
+    "docker:down": "docker-compose down",
+    "db:migrate:test": "dotenv -e .env.test -- drizzle-kit migrate",
+    "pretest": "yarn db:migrate:test",
+    "pretest:watch": "yarn db:migrate:test"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.932.0",

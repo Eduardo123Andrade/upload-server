@@ -1,8 +1,6 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { uploadImages } from '@/app/functions'
-import { db } from '@/infra/db'
-import { schemas } from '@/infra/db/schemas'
 import { isRight, unwrapEither } from './../../../shared/either'
 
 export const uploadImagesRoute: FastifyPluginAsyncZod = async server => {
