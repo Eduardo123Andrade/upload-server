@@ -1,0 +1,47 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+
+jobs:
+  run-ci:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: docker
+          POSTGRES_PASSWORD: docker
+          POSTGRES_DB: upload_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        name: Install yarn
+        with:
+          version: 9
+          # avoid install to do the next step first
+          run_install: false
+
+      # create cache to yarn
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "yarn"
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run test
