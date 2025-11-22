@@ -17,7 +17,7 @@ type GetUploadsOutput = {
   uploads: {
     id: string
     name: string
-    url: string
+    remoteUrl: string
     remoteKey: string
     createdAt: Date
   }[]
@@ -41,7 +41,7 @@ export const getUploads = async (
       .select({
         id: schemas.uploads.id,
         name: schemas.uploads.name,
-        url: schemas.uploads.remoteUrl,
+        remoteUrl: schemas.uploads.remoteUrl,
         remoteKey: schemas.uploads.remoteKey,
         createdAt: schemas.uploads.createdAt,
       })
